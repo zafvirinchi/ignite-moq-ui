@@ -17,6 +17,7 @@
     "submit": "Signup",
     "passwordMismatch": "Passwords do not match!",
     "success": "Signup successful!",
-    "error": "Signup failed. Please try again."
+    "error": "Signup failed. Please try again.",
+    "backToLogin": "Back To Login"
   }
 }
