@@ -9,7 +9,9 @@ export default function AppRoutes() {
       
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      {/* Add other routes */}
+      {/* <Route path="/products" element={<ProductTab />} />
+      <Route path="/boq" element={<BOQTab />} /> */}
+      
     </Routes>
   );
 }
