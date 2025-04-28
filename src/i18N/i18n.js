@@ -1,21 +1,24 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import HttpBackend from 'i18next-http-backend';
+import Backend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Initialize i18n
+// Initialize i18next with correct settings
 i18n
+  .use(Backend)  // To load translations from backend (local JSON files in this case)
   .use(LanguageDetector)
-  .use(HttpBackend) // Using HTTP backend to load translation files
-  .use(initReactI18next)
+  .use(initReactI18next) // Bind i18n to React
   .init({
-    fallbackLng: 'en',
-    debug: true,
+    fallbackLng: 'en', // Default language if no language is detected
+    debug: true, // Enable debugging
     interpolation: {
-      escapeValue: false, // React already escapes
+      escapeValue: false, // React already escapes values
     },
     backend: {
-      loadPath: '/src/components/i18N/{{lng}}.json', // Path to your JSON files
+      loadPath: '/{{lng}}.json', // Ensure correct path
+    },
+    react: {
+      useSuspense: false, // Disable Suspense for now (you can enable later if needed)
     },
   });
 

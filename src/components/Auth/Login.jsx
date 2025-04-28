@@ -1,4 +1,4 @@
-import '../../i18N/i18n'; // Correct path to the i18n.js file
+import '../../i18N/i18n'; 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { login } from '../../services/authApi';
@@ -64,7 +64,7 @@ export default function Login() {
                       onChange={handleChange}
                       required
                     />
-                    <label htmlFor="floatingEmail">{t('login.email')}</label>
+                   <label htmlFor="floatingEmail">{t('login.email')}</label>
                   </div>
 
                   <div className="form-floating mb-3">

@@ -1,0 +1,22 @@
+{
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "success": "Login successful!",
+    "error": "Login failed. Please check your credentials.",
+    "createAccount": "Create new account"
+  },
+  "signup": {
+    "title": "Signup",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Signup",
+    "passwordMismatch": "Passwords do not match!",
+    "success": "Signup successful!",
+    "error": "Signup failed. Please try again."
+  }
+}
