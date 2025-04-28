@@ -1,8 +1,9 @@
-// src/components/Auth/Login.jsx
+import '../../i18N/i18n'; // Correct path to the i18n.js file
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { login } from '../../services/authApi';
-import { useNavigate } from 'react-router-dom'; // for redirecting after login
+import { useNavigate, Link } from 'react-router-dom'; // Link imported here
+import Layout from '../../components/Layout'; // Layout imported here
 
 export default function Login() {
   const { t } = useTranslation();
@@ -13,6 +14,8 @@ export default function Login() {
     password: '',
   });
 
+  const [isSaving, setIsSaving] = useState(false); // isSaving state added
+
   const handleChange = (e) => {
     setFormData(prev => ({
       ...prev,
@@ -22,48 +25,89 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSaving(true); // start saving
 
     try {
-      const response = await login(formData); // call login API
-      const token = response.data.token; // depends on your Laravel API response
+      const response = await login(formData);
+      const token = response.data.token;
 
-      // Store token to localStorage
       localStorage.setItem('authToken', token);
 
       alert(t('login.success'));
-      navigate('/products'); // or home/dashboard
+      navigate('/products');
     } catch (error) {
       console.error(error.response?.data || error.message);
       alert(t('login.error'));
+    } finally {
+      setIsSaving(false); // stop saving
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>{t('login.title')}</h2>
-      <div>
-        <label>{t('login.email')}</label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-      </div>
+    <Layout>
+      <div className="container">
+        <div className="row">
+          <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div className="card border-0 shadow rounded-3 my-5">
+              <div className="card-body p-4 p-sm-5">
+                <h5 className="card-title text-center mb-5 fw-light fs-5">{t('login.title')}</h5>
 
-      <div>
-        <label>{t('login.password')}</label>
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-      </div>
+                <form onSubmit={handleSubmit}>
+                  <div className="form-floating mb-3">
+                    <input
+                      type="email"
+                      name="email"
+                      className="form-control"
+                      id="floatingEmail"
+                      placeholder={t('login.email')}
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                    <label htmlFor="floatingEmail">{t('login.email')}</label>
+                  </div>
 
-      <button type="submit">{t('login.submit')}</button>
-    </form>
+                  <div className="form-floating mb-3">
+                    <input
+                      type="password"
+                      name="password"
+                      className="form-control"
+                      id="floatingPassword"
+                      placeholder={t('login.password')}
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                    />
+                    <label htmlFor="floatingPassword">{t('login.password')}</label>
+                  </div>
+
+                  <div className="d-grid">
+                    <button
+                      disabled={isSaving}
+                      type="submit"
+                      className="btn btn-primary btn-login text-uppercase fw-bold"
+                    >
+                      {isSaving ? t('login.saving') : t('login.submit')}
+                    </button>
+                  </div>
+
+                  <hr className="my-4" />
+
+                  <div className="d-grid">
+                    <Link
+                      className="btn btn-outline-primary btn-login text-uppercase fw-bold"
+                      to="/signup"
+                    >
+                      {t('login.createAccount')}
+                    </Link>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Layout>
   );
 }
