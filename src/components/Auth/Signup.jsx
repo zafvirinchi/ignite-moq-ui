@@ -1,11 +1,11 @@
 import '../../i18N/i18n';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { signup } from '../../services/authApi'; // assume you will create signup API call
+import { Signup } from '../../services/authApi'; // assume you will create signup API call
 import { useNavigate, Link } from 'react-router-dom';
 import Layout from '../../components/Layout';
 
-export default function Signup() {
+export default function SignupPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -35,13 +35,13 @@ export default function Signup() {
     setIsSaving(true);
 
     try {
-      const response = await signup(formData); // API call to signup
-      const token = response.data.token;
+      const response = await Signup(formData); 
+      const token = response.access_token;
 
       localStorage.setItem('authToken', token);
 
       alert(t('signup.success'));
-      navigate('/products'); // or wherever you want to redirect after signup
+      navigate('/');
     } catch (error) {
       console.error(error.response?.data || error.message);
       alert(t('signup.error'));

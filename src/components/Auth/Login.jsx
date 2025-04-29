@@ -1,11 +1,11 @@
 import '../../i18N/i18n'; 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { login } from '../../services/authApi';
+import { Login,fetchCsrfToken } from '../../services/authApi';
 import { useNavigate, Link } from 'react-router-dom'; // Link imported here
 import Layout from '../../components/Layout'; // Layout imported here
 
-export default function Login() {
+export default function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -28,13 +28,16 @@ export default function Login() {
     setIsSaving(true); // start saving
 
     try {
-      const response = await login(formData);
-      const token = response.data.token;
 
-      localStorage.setItem('authToken', token);
+      await fetchCsrfToken();
+
+      const response = await Login(formData);
+      const token = response.access_token;
+      console.log("token",token);
+      localStorage.setItem('authToken',JSON.stringify(token));
 
       alert(t('login.success'));
-      navigate('/products');
+      navigate('/dashboard');
     } catch (error) {
       console.error(error.response?.data || error.message);
       alert(t('login.error'));

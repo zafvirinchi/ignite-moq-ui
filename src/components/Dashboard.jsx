@@ -1,25 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import API from '../services/authApi';
 
 function Dashboard() {
   const [products, setProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch products and materials from API (here we're using mock data)
-    axios.get('/api/products')
-      .then((response) => {
-        setProducts(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching products:', error);
-      });
-  }, []);
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      navigate('/login');
+    }
+
+    const fetchProducts = async () => {
+      try {
+        const response = await API.get('/api/products', { withCredentials: true });
+        console.log("response", response.data);
+        setProducts(Array.isArray(response.data) ? response.data : []);
+      } catch (err) {
+        setError('Error fetching products.');
+        console.error('Error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [navigate]);
 
   const handleDelete = (id) => {
-    axios.delete(`/api/products/${id}`)
+    API.delete(`/products/${id}`)
       .then(() => {
         setProducts(products.filter(product => product.id !== id));
       })
@@ -38,33 +53,61 @@ function Dashboard() {
     setSelectedProduct(null);
   };
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
-    <div>
-      <h2>Dashboard</h2>
-      <Link to="/add-product" className="btn btn-primary">Add Product</Link>
-      <div className="product-list">
-        {products.length === 0 ? (
-          <p>No products available.</p>
-        ) : (
-          products.map(product => (
-            <div key={product.id} className="product-item">
-              <h3>{product.name}</h3>
-              <p>{product.description}</p>
-              <p><strong>Price:</strong> ${product.price}</p>
-
-              <button 
-                onClick={() => handleShowMaterial(product)} 
-                className="btn btn-info"
-              >
-                Show Material
-              </button>
-
-              <Link to={`/update-product/${product.id}`} className="btn btn-info">Update Product</Link>
-              <button onClick={() => handleDelete(product.id)} className="btn btn-danger">Delete Product</button>
-            </div>
-          ))
-        )}
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>Products</h2>
+        <Link to="/add-product" className="btn btn-primary">Add Product</Link>
       </div>
+
+      {products.length === 0 ? (
+        <p>No products available.</p>
+      ) : (
+        <div className="table-responsive">
+          <table className="table table-bordered table-striped">
+            <thead className="table-dark">
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price ($)</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map(product => (
+                <tr key={product.id}>
+                  <td>{product.name}</td>
+                  <td>{product.description}</td>
+                  <td>{product.amount}</td>
+                  <td>
+                    <button 
+                      className="btn btn-sm btn-info me-2" 
+                      onClick={() => handleShowMaterial(product)}
+                    >
+                      Show Materials
+                    </button>
+                    <Link 
+                      to={`/update-product/${product.id}`} 
+                      className="btn btn-sm btn-warning me-2"
+                    >
+                      Update
+                    </Link>
+                    <button 
+                      className="btn btn-sm btn-danger" 
+                      onClick={() => handleDelete(product.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Modal to Show Materials */}
       {showModal && selectedProduct && (
@@ -76,19 +119,23 @@ function Dashboard() {
                 <button type="button" className="btn-close" onClick={handleCloseModal}></button>
               </div>
               <div className="modal-body">
-                <table className="table table-striped">
+                <table className="table table-sm table-striped">
                   <thead>
                     <tr>
                       <th>Name</th>
                       <th>Quantity</th>
+                      <th>Rate</th>
+                      <th>Amount</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedProduct.materials.length > 0 ? (
+                    {selectedProduct.materials?.length > 0 ? (
                       selectedProduct.materials.map((material, index) => (
                         <tr key={index}>
-                          <td>{material.name}</td>
+                          <td>{material.description}</td>
                           <td>{material.quantity}</td>
+                          <td>{material.rate}</td>
+                          <td>{material.amount}</td>
                         </tr>
                       ))
                     ) : (
@@ -100,7 +147,13 @@ function Dashboard() {
                 </table>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>Close</button>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={handleCloseModal}
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>
