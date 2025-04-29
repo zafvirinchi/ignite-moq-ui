@@ -4,6 +4,7 @@ import Signup from '../components/Auth/Signup';
 import AddProduct from '../components/AddProduct';
 import UpdateProduct from '../components/UpdateProduct';
 import Dashboard from '../components/Dashboard';
+import DeleteProduct from '../components/DeleteProduct';
 
 export default function AppRoutes() {
   return (
@@ -14,6 +15,7 @@ export default function AppRoutes() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/add-product" element={<AddProduct />} />
       <Route path="/update-product/:id" element={<UpdateProduct />} />
+      <Route path="/delete-product/:id" element={<DeleteProduct />} />
 
       
     </Routes>
