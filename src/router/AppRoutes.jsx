@@ -5,6 +5,10 @@ import AddProduct from '../components/AddProduct';
 import UpdateProduct from '../components/UpdateProduct';
 import Dashboard from '../components/Dashboard';
 import DeleteProduct from '../components/DeleteProduct';
+import ShowMaterial from '../components/ShowMaterial';
+import EditMaterial from '../components/EditMaterial';
+import AddMaterial from '../components/AddMaterial';
+import DeleteMaterial from '../components/DeleteMaterial';
 
 export default function AppRoutes() {
   return (
@@ -16,8 +20,9 @@ export default function AppRoutes() {
       <Route path="/add-product" element={<AddProduct />} />
       <Route path="/update-product/:id" element={<UpdateProduct />} />
       <Route path="/delete-product/:id" element={<DeleteProduct />} />
-
-      
+      <Route path="/materials/:id" element={<ShowMaterial />} />
+      <Route path="/materials/add" element={<AddMaterial />} />
+      <Route path="/materials/delete/:id" element={<DeleteMaterial />} />
     </Routes>
   );
 }

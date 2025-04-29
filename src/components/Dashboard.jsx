@@ -5,7 +5,6 @@ import API from '../services/authApi';
 function Dashboard() {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [showModal, setShowModal] = useState(false);
   const [showBOQModal, setShowBOQModal] = useState(false);
   const [boqQuantity, setBoqQuantity] = useState('');
   const [boqResult, setBoqResult] = useState(null);
@@ -38,13 +37,7 @@ function Dashboard() {
   }, [navigate]);
 
   const handleShowMaterial = (product) => {
-    setSelectedProduct(product);
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setSelectedProduct(null);
+    navigate(`/materials/${product.id}`, { state: { product } });
   };
 
   const handleShowBOQModal = (product) => {
@@ -118,6 +111,7 @@ function Dashboard() {
                 <th>Other Amount($)</th>
                 <th>Margin Amount($)</th>
                 <th>Total Amount($)</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -133,12 +127,12 @@ function Dashboard() {
                   <td>{product.margin_amount}</td>
                   <td>{product.amount}</td>
                   <td>
-                    <button
-                      className="btn btn-sm btn-info me-2"
-                      onClick={() => handleShowMaterial(product)}
+                  <Link
+                      to={`/materials/${product.id}`}
+                      className="btn btn-sm btn-warning me-2"
                     >
-                      Show Materials
-                    </button>
+                       Show Materials
+                    </Link>
                     <button
                       className="btn btn-sm btn-success me-2"
                       onClick={() => handleShowBOQModal(product)}
@@ -162,51 +156,6 @@ function Dashboard() {
               ))}
             </tbody>
           </table>
-        </div>
-      )}
-
-      {/* Materials Modal */}
-      {showModal && selectedProduct && (
-        <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-modal="true">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Materials for {selectedProduct.name}</h5>
-                <button type="button" className="btn-close" onClick={handleCloseModal}></button>
-              </div>
-              <div className="modal-body">
-                <table className="table table-sm table-striped">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Quantity</th>
-                      <th>Rate</th>
-                      <th>Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedProduct.materials?.length > 0 ? (
-                      selectedProduct.materials.map((material, idx) => (
-                        <tr key={idx}>
-                          <td>{material.description}</td>
-                          <td>{material.quantity}</td>
-                          <td>{material.rate}</td>
-                          <td>{material.amount}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="4" className="text-center">No materials available.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={handleCloseModal}>Close</button>
-              </div>
-            </div>
-          </div>
         </div>
       )}
 
